@@ -33,6 +33,16 @@ class GameScene: SKScene {
         let board = [top_left, top_middle, top_right, middle_left, center, middle_right, bottom_left, bottom_middle, bottom_right]
         
         gameBoard = Board(gameboard: board)
+        
+        ai = GKMinmaxStrategist()
+        ai.maxLookAheadDepth = 9
+        ai.randomSource = GKARC4RandomSource()
+        let beginGameState = StartGameState(scene: self)
+        let activeGameState = ActiveGameState(scene: self)
+        let endGameState = EndGameState(scene: self)
+        
+        stateMachine = GKStateMachine(states: [beginGameState, activeGameState, endGameState])
+        stateMachine.enter(StartGameState.self)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -47,7 +57,6 @@ class GameScene: SKScene {
                     return
                 }
             }
-            
             if gameBoard.isPlayerOne(){
                 let cross = SKSpriteNode(imageNamed: "X_symbol")
                 cross.size = CGSize(width: 75, height: 75)
@@ -73,7 +82,8 @@ class GameScene: SKScene {
         }
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+    override func update(_ currentTime: CFTimeInterval) {
+        /* Called before each frame is rendered */
+        self.stateMachine.update(deltaTime: currentTime)
     }
 }

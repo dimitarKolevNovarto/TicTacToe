@@ -159,7 +159,6 @@ class ActiveGameState: GKState{
             DispatchQueue.global().async {
                 self.scene!.ai.gameModel = self.scene!.gameBoard!
                 let move = self.scene!.ai.bestMoveForActivePlayer() as? Move
-                
                 assert(move != nil, "AI should be able to find a move")
                 
                 let strategistTime = CFAbsoluteTimeGetCurrent()

@@ -53,19 +53,13 @@ class Move: NSObject, GKGameModelUpdate{
 
 @objc(Board)
 class Board: NSObject, NSCopying, GKGameModel{
-    
+
     private let _players: [GKGameModelPlayer] = [Player(player: 0), Player(player: 1)]
     private var currentPlayer: GKGameModelPlayer?
     private var board: [BoardCell]
     private var currentScoreForPlayerOne: Int
     private var currentScoreForPlayerTwo: Int
     
-    func copy(with zone: NSZone? = nil) -> Any {
-        let copy = Board()
-        copy.setGameModel(self)
-        return copy
-    }
-
     func isPlayerOne()->Bool{
         return currentPlayer?.playerId == _players[0].playerId
     }
@@ -112,7 +106,12 @@ class Board: NSObject, NSCopying, GKGameModel{
         return player.playerId == _players[0].playerId
     }
     
-
+    
+    func copy(with zone: NSZone? = nil) -> Any{
+        let copy = Board()
+        copy.setGameModel(self)
+        return copy
+    }
     
     required override init() {
         self.currentPlayer = _players[0]
@@ -169,7 +168,7 @@ class Board: NSObject, NSCopying, GKGameModel{
         return moves
     }
     
-    func unapplyGameModelUpdate(_ gameModelUpdate: GKGameModelUpdate) {
+    func unapply(_ gameModelUpdate: GKGameModelUpdate) {
         let move = gameModelUpdate as! Move
         self.board[move.cell].value = .None
         self.togglePlayer()
@@ -181,7 +180,6 @@ class Board: NSObject, NSCopying, GKGameModel{
         self.togglePlayer()
         
     }
-    
     func getPlayerAtBoardCell(gridCoord: BoardCell)->GKGameModelPlayer?{
         return gridCoord.value == .X ? self.players?.first: self.players?.last
     }
@@ -203,8 +201,7 @@ class Board: NSObject, NSCopying, GKGameModel{
         
         return false
     }
-    
-    func scoreForPlayer(player: GKGameModelPlayer) -> Int {
+    func score(for player: GKGameModelPlayer) -> Int {
         if isWinForPlayer(player: player){
             if isPlayerOne(player: player){
                 currentScoreForPlayerOne += 4
